@@ -8,7 +8,7 @@ var app = http.createServer(function(request,response){
   var pathname = url.parse(_url, true).pathname;
   
   if(pathname === '/'){
-    if(queryData.id === undefined){
+    if(queryData.id === undefined){ // 정의되어있지 않은 값.
       var title = 'Welcome';
       var description = 'Helloe, Node.js';
       var template = `
@@ -32,7 +32,7 @@ var app = http.createServer(function(request,response){
       `;
       response.writeHead(200);
       response.end(template);
-    }else{
+    }else{ // HTML, CSS, JavaScript라는 id가 존재할 때
       fs.readFile(`data/${queryData.id}.html`, 'utf8', (err, description) => {
         var title = queryData.id;
         var template = `
