@@ -10,7 +10,7 @@ var app = http.createServer(function(request,response){
   if(pathname === '/'){
     if(queryData.id === undefined){ // 정의되어있지 않은 값.
       var title = 'Welcome';
-      var description = 'Helloe, Node.js';
+      var description = 'Hello, Node.js';
       var template = `
       <!doctype html>
       <html>
