@@ -10,11 +10,11 @@ var app = http.createServer(function(request,response){
 
   if(pathname === '/'){
     if(queryData.id === undefined){
-      fs.readdir('data', 'utf8', (err, filelist) => {
+      fs.readdir('data', (err, filelist) => {
         var title = 'Welcome';
         var ol = templateList(filelist);
         var description = 'Hello, Node.js';
-        var template = templateHtml(title, ol, `<h2>${title}</h2><p>${description}</p>`, `<a href="/create">create</a>`);
+        var template = templateHtml(title, ol, `<h2>${title}</h2><p>${description}</p>`);
         response.writeHead(200);
         response.end(template);
       })
@@ -23,7 +23,7 @@ var app = http.createServer(function(request,response){
         fs.readFile(`data/${queryData.id}`, 'utf8', (err, description) => {
           var title = queryData.id.replace('.html', '');
           var ol = templateList(filelist);
-          var template = templateHtml(title, ol, `<h2>${title}</h2><p>${description}</p>`, `<a href="/create">create</a> <a href="/update?id=${title}.html">update</a>`);
+          var template = templateHtml(title, ol, `<h2>${title}</h2><p>${description}</p>`);
           response.writeHead(200);
           response.end(template);
         })
@@ -34,73 +34,34 @@ var app = http.createServer(function(request,response){
       var title = 'WEB - create';
       var ol = templateList(filelist);
       var template = templateHtml(title, ol, `
-        <form action="/create_process" method="post">
+        <form action="http://localhost:3000/create_process" method="post">
           <p><input type="text" name="title" placeholder="title"></p>
           <p><textarea name="description" placeholder="description"></textarea></p>
           <p><input type="submit"></p>
         </form>
-      `, ``);
+      `);
       response.writeHead(200);
       response.end(template);
     })
   }else if(pathname === '/create_process'){
     var body = '';
+    // 1. 한번에 많은 양의 데이터를 포스트방식으로 받아올 때에, 무리가되어 강제종료될 수 도 있기때문에, 조각조각 잘라서 받아올때마다 해당 'data' method를 실행시키게 하는 것.
+    // 2. 실행되어 조각조각된 데이터를 받아올 때마다 비어있는 body에 누적시킴
+    // 3. 데이터를 조각조각 보내다가, 더 이상 보낼 데이터가 없다면 해당 'end' method를 실행
     request.on('data', (data) => {
       body = body + data;
+      // if(body.length > 1e6){ // 데이터가 너무 많으면 강제종료
+      //   request.connection.destroy()
+      // }
     })
     request.on('end', () => {
       var post = qs.parse(body);
       var title = post.title;
       var description = post.description;
-      fs.writeFile(`data/${title}.html`, description, 'utf8', (err) => {
-        if(err){
-          response.writeHead(404);
-          response.end('Not Found');
-        }else{
-          response.writeHead(302, {Location: `/?id=${title}.html`});
-          response.end();
-        }
-      })
+      console.log(title, description);
     })
-  }else if(pathname === '/update'){
-    fs.readdir('data', (err, filelist) => {
-      fs.readFile(`data/${queryData.id}`, 'utf8', (err, description) => {
-        var title = queryData.id.replace('.html', '');
-        var ol = templateList(filelist);
-        var template = templateHtml(title, ol, `
-        <form action="/update_process" method="post">
-          <input type="hidden" name="id" value="${title}">
-          <p><input type="text" name="title" placeholder="title" value="${title}"></p>
-          <p><textarea name="description" placeholder="description">${description}</textarea></p>
-          <p><input type="submit"></p>
-        </form>
-        `, ``);
-        response.writeHead(200);
-        response.end(template);
-      })
-    })
-  }else if(pathname === '/update_process'){
-    var body = '';
-    request.on('data', (data) => {
-      body = body + data;
-    })
-    request.on('end', () => {
-      var post = qs.parse(body);
-      var id = post.id
-      var title = post.title;
-      var description = post.description;
-      fs.rename(`data/${id}.html`, `data/${title}.html`, (err) => {
-        fs.writeFile(`data/${title}.html`, description, 'utf8', (err) => {
-          if(err){
-            response.writeHead(404);
-            response.end('Not Found');
-          }else{
-            response.writeHead(302, {Location: `/?id=${title}.html`});
-            response.end();
-          }
-        }) 
-      })
-    })
+    response.writeHead(200);
+    response.end('success');
   }else{
     response.writeHead(404);
     response.end('Not Found');
@@ -109,7 +70,7 @@ var app = http.createServer(function(request,response){
 app.listen(3000);
 
 
-function templateHtml(title, ol, body, control){
+function templateHtml(title, ol, body){
   return `
     <!doctype html>
     <html>
@@ -123,7 +84,7 @@ function templateHtml(title, ol, body, control){
     <body>
       <h1><a href="/">WEB</a></h1>
       ${ol}
-      ${control}
+      <a href="/create">create</a> 
       ${body}
     </body>
     </html>

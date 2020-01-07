@@ -9,7 +9,7 @@ var url = require('url'); // url이라는 모듈을 사용할 것이다.
 // 다음 강의에서부터 a의 링크를 모두 querystring으로 변경하니 걱정 ㄴㄴ
 var app = http.createServer(function(request,response){
     var _url = request.url;
-    // console.log(_url); // /?id=HTML <- 초기에는 윈도우창에 직접 입력을 해주어야함 위의 이유로
+    // console.log(_url); // /?id=HTML <- 초기에는 윈도우창에 직접 입력을 해주어야함 위의 이유로 도메인이름, 포스트 이후의 값
     var queryData = url.parse(_url, true).query; // 주소에서 querystring을 가져오는 방법(객체형식)
     // console.log(queryData); // { id : 'HTML' }
     
