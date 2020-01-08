@@ -6,6 +6,26 @@ var template = require('./lib/template.js');
 var path = require('path');
 var sanitizeHtml = require('sanitize-html');
 
+// 사용방법
+// var dirty = 'some really tacky HTML';
+// var clean = sanitizeHtml(dirty);
+
+// 사용자에 의해 어떠한 값을 입력받을 때 그것을 그대로 띄우게 된다?
+// 1. script태그를 활용해서 location.href="불법사이트" 혹은 alert(개인정보)를 악용하여 최악의 사태가 일어날 수 있다.
+
+// 방법1) 태그의 기호인 <, >를 그대로 문자로 출력시킨다.
+// 방법2) 지워버린다.
+
+// 파일을 읽을 때 발생하는 문제이니, 읽을때만 처리해주면 됨.
+// sanitizeHtml()을 통해 태그를 모두 지워버림.
+
+// npm을 통해 해당 기능을 하는 모듈을 받자.
+// npm init입력 : npm을 관리하는 json파일(그냥 다 확인누르면됨)
+// npm install -g 이름 : 내 pc 모든파일에서 작동하는 모듈
+// npm install -S 이름 : 현재 프로그램? 파일? 에서만 작동하는 모듈
+
+// 특정 모듈을 설치했다면, npm json파일의 dependencies에 깔리게 됨.
+
 var app = http.createServer(function(request,response){
   var _url = request.url;
   var queryData = url.parse(_url, true).query;

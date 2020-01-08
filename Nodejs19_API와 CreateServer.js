@@ -6,7 +6,14 @@ var template = require('./lib/template.js');
 var path = require('path');
 var sanitizeHtml = require('sanitize-html');
 
+// API = Application Programming Interface
+// ex) fs.readFile
+// 우리는 readFile이라는 메소드를 만들지 않았고, 어떻게작동하는지 모르지만 Nodejs개발자들이 해당 메소드를 만들고 제공하고있다.
+// Nodejs메인사이트의 문서에서 사용할수 있는 API들을 볼 수 있다.
+
 var app = http.createServer(function(request,response){
+  // request : 받아오는 정보
+  // response : 전달하고자하는 정보
   var _url = request.url;
   var queryData = url.parse(_url, true).query;
   var pathname = url.parse(_url, true).pathname;

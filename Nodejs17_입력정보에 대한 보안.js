@@ -4,7 +4,13 @@ var url = require('url');
 var qs = require('querystring');
 var template = require('./lib/template.js');
 var path = require('path');
-var sanitizeHtml = require('sanitize-html');
+// ?id=../userInform.js
+
+// 상황 : DB를 통해 받아온 회원정보(id와 pw가 있음)를 유지시키고 있는 상태임.
+// 1. Nodejs 특성상 url을 통해 정보를 읽고 해당 정보를 토대로 화면에 띄워줄때 읽어오는 부분을 ../(dir수정 즉 폴더위치 변경)을 통해 다른곳의 띄울 수 있다.
+// 2. 그것을 막기 위해 url을 통해 정보를 받아오는 과정에서는 path가 제공하는 모듈을 사용하여 url에서 읽어오는 부분을 path.parse(queryData.id).base로 가공하여 dir부분을 모두 제거한 다음, 경로에다 입력해준다.
+// 즉, 사용자가 dir을 조절 할 수 없도록 하는 것.
+// 그냥 querystring의 값들은 다 dir을 제거해주는 작업을 해주면 될 듯
 
 var app = http.createServer(function(request,response){
   var _url = request.url;
@@ -24,16 +30,23 @@ var app = http.createServer(function(request,response){
     }else{
       fs.readdir('data', (err, filelist) => {
         var filteredId = path.parse(queryData.id).base;
+        // console.log(path.parse('../userInform.js'));
+          // 0|main   | { root: '',
+          // 0|main   |   dir: '..',
+          // 0|main   |   base: 'userInform.js',
+          // 0|main   |   ext: '.js',
+          // 0|main   |   name: 'userInform' }
+        // console.log(filteredId); // userInform.js
+        // console.log(queryData.id) // ../userInform.js
         fs.readFile(`data/${filteredId}`, 'utf8', (err, description) => {
+        // fs.readFile(`data/${queryData.id}`, 'utf8', (err, description) => {
           var title = queryData.id.replace('.html', '');
-          var sanitizedTitle = sanitizeHtml(title);
-          var sanitizedDescription = sanitizeHtml(description);
           var ol = template.list(filelist);
-          var html = template.html(sanitizedTitle, ol, `<h2>${sanitizedTitle}</h2><p>${sanitizedDescription}</p>`, `
+          var html = template.html(title, ol, `<h2>${title}</h2><p>${description}</p>`, `
             <a href="/create">create</a> 
-            <a href="/update?id=${sanitizedTitle}.html">update</a> 
+            <a href="/update?id=${title}.html">update</a> 
             <form action="delete_process" method="post">
-              <input type="hidden" name="id" value="${sanitizedTitle}">
+              <input type="hidden" name="id" value="${title}">
               <input type="submit" value="delete">
             </form>
           `);

@@ -1,10 +1,14 @@
+// 모듈이란?
+// mpart.js, muse.js 참고
+
 var http = require('http');
 var fs = require('fs');
 var url = require('url');
 var qs = require('querystring');
 var template = require('./lib/template.js');
-var path = require('path');
-var sanitizeHtml = require('sanitize-html');
+
+// 1. lib이라는 폴더 안에, template.js를 생성하고 기존의 template함수를 넣은 뒤, module.exports를 해준다.
+// 2. 현재 파일에서 template = require('주소')
 
 var app = http.createServer(function(request,response){
   var _url = request.url;
@@ -23,17 +27,14 @@ var app = http.createServer(function(request,response){
       })
     }else{
       fs.readdir('data', (err, filelist) => {
-        var filteredId = path.parse(queryData.id).base;
-        fs.readFile(`data/${filteredId}`, 'utf8', (err, description) => {
+        fs.readFile(`data/${queryData.id}`, 'utf8', (err, description) => {
           var title = queryData.id.replace('.html', '');
-          var sanitizedTitle = sanitizeHtml(title);
-          var sanitizedDescription = sanitizeHtml(description);
           var ol = template.list(filelist);
-          var html = template.html(sanitizedTitle, ol, `<h2>${sanitizedTitle}</h2><p>${sanitizedDescription}</p>`, `
+          var html = template.html(title, ol, `<h2>${title}</h2><p>${description}</p>`, `
             <a href="/create">create</a> 
-            <a href="/update?id=${sanitizedTitle}.html">update</a> 
+            <a href="/update?id=${title}.html">update</a> 
             <form action="delete_process" method="post">
-              <input type="hidden" name="id" value="${sanitizedTitle}">
+              <input type="hidden" name="id" value="${title}">
               <input type="submit" value="delete">
             </form>
           `);
@@ -77,8 +78,7 @@ var app = http.createServer(function(request,response){
     })
   }else if(pathname === '/update'){
     fs.readdir('data', (err, filelist) => {
-      var filteredId = path.parse(queryData.id).base;
-      fs.readFile(`data/${filteredId}`, 'utf8', (err, description) => {
+      fs.readFile(`data/${queryData.id}`, 'utf8', (err, description) => {
         var title = queryData.id.replace('.html', '');
         var ol = template.list(filelist);
         var html = template.html(title, ol, `
