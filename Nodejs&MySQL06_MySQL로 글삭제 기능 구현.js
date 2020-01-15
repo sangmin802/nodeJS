@@ -37,23 +37,22 @@ var app = http.createServer(function(request,response){
         if(err){
           throw err;
         }
-        db.query(`SELECT * FROM topic LEFT JOIN author on topic.author_id = author.id WHERE topic.id = ?;`, [queryData.id], (err2, topic) => {
+        db.query(`SELECT * FROM topic WHERE id = ?;`, [queryData.id], (err2, topic) => {
           if(err2){
             throw err2;
-          }else{
-            var title = topic[0].title;
-            var ol = template.list(topics);
-            var description = topic[0].description;
-            var html = template.html(title, ol, `<h2>${title}</h2><p>${description}</p><p>By ${topic[0].name}</p>`, `
-            <a href="/update?id=${queryData.id}">update</a> 
-            <form action="delete_process" method="post">
-              <input type="hidden" name="id" value="${queryData.id}">
-              <input type="submit" value="delete">
-            </form>
-             `);
-            response.writeHead(200);
-            response.end(html);
           }
+          var title = topic[0].title;
+          var ol = template.list(topics);
+          var description = topic[0].description;
+          var html = template.html(title, ol, `<h2>${title}</h2><p>${description}</p>`, `
+          <a href="/update?id=${queryData.id}">update</a> 
+          <form action="delete_process" method="post">
+            <input type="hidden" name="id" value="${queryData.id}">
+            <input type="submit" value="delete">
+          </form>
+        `);
+          response.writeHead(200);
+          response.end(html);
         })
       })
     }

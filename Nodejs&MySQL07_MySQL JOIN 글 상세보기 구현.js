@@ -33,6 +33,7 @@ var app = http.createServer(function(request,response){
         response.end(html);
       })
     }else{
+      // 1. topic에서 필요한 부분을 읽어올 때, JOIN문을 통해 연결시키고, id값이 중복되기 때문에 WHERE로 구분짓는 id는 topic.id라 명시시켜주자.
       db.query(`SELECT * FROM topic;`, (err, topics) => {
         if(err){
           throw err;

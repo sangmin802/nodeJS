@@ -37,23 +37,22 @@ var app = http.createServer(function(request,response){
         if(err){
           throw err;
         }
-        db.query(`SELECT * FROM topic LEFT JOIN author on topic.author_id = author.id WHERE topic.id = ?;`, [queryData.id], (err2, topic) => {
+        db.query(`SELECT * FROM topic WHERE id = ?;`, [queryData.id], (err2, topic) => {
           if(err2){
             throw err2;
-          }else{
-            var title = topic[0].title;
-            var ol = template.list(topics);
-            var description = topic[0].description;
-            var html = template.html(title, ol, `<h2>${title}</h2><p>${description}</p><p>By ${topic[0].name}</p>`, `
-            <a href="/update?id=${queryData.id}">update</a> 
-            <form action="delete_process" method="post">
-              <input type="hidden" name="id" value="${queryData.id}">
-              <input type="submit" value="delete">
-            </form>
-             `);
-            response.writeHead(200);
-            response.end(html);
           }
+          var title = topic[0].title;
+          var ol = template.list(topics);
+          var description = topic[0].description;
+          var html = template.html(title, ol, `<h2>${title}</h2><p>${description}</p>`, `
+          <a href="/update?id=${queryData.id}">update</a> 
+          <form action="delete_process" method="post">
+            <input type="hidden" name="id" value="${queryData.id}">
+            <input type="submit" value="delete">
+          </form>
+        `);
+          response.writeHead(200);
+          response.end(html);
         })
       })
     }
@@ -91,6 +90,8 @@ var app = http.createServer(function(request,response){
       })
     })
   }else if(pathname === '/update'){
+    // 1. 선택된 것(?)의 고유 id값을 보내주고, 받는데, 보안을 위한 절차 ? 를 거치자.
+    // 2. sql언어에서 update 기능을 할 때, 여러개라면 ,를 이용해 구분해주면 된다.
     db.query(`SELECT * FROM topic`, (err, topics) => {
       if(err){
         throw err;
@@ -142,9 +143,10 @@ var app = http.createServer(function(request,response){
     request.on('end', () => {
       var post = qs.parse(body);
       var id = post.id
-      db.query(`DELETE FROM topic WHERE id = ?`, [id], (err, result) => {
+      fs.unlink(`data/${id}.html`, (err) => {
         if(err){
-          throw err;
+          response.writeHead(404);
+          response.end('Not Found');          
         }else{
           response.writeHead(302, {Location: `/`});
           response.end();
