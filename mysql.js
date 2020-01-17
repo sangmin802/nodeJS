@@ -14,7 +14,7 @@ connection.query('SELECT * FROM topic', function (error, results, fields) {
   if (error) {
       console.log(error);
   };
-  console.log(results);
+  // console.log(results);
 });
  
 connection.end();
