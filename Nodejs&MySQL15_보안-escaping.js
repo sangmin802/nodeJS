@@ -1,0 +1,1 @@
+// 1. 우리 nodejs 처음 할 때, sanitize html npm으로 사용자가 입력값에 어떠한 script문을 넣었을 때, 그것이 작동되는것을 막아주었었다.

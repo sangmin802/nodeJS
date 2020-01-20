@@ -1,5 +1,8 @@
 var http = require('http');
 var url = require('url');
+var qs = require('querystring');
+var template = require('./lib/template.js');
+var db = require('./lib/db.js');
 var topic = require('./lib/topic.js');
 var author = require('./lib/author.js');
 
@@ -7,7 +10,7 @@ var app = http.createServer((request,response) => {
   var _url = request.url;
   var queryData = url.parse(_url, true).query;
   var pathname = url.parse(_url, true).pathname;
-
+  
   if(pathname === '/'){
     if(queryData.id === undefined){
       topic.home(request, response);
@@ -32,8 +35,6 @@ var app = http.createServer((request,response) => {
     author.update(request,response);
   }else if(pathname === '/author/update_process'){
     author.updateProcess(request, response);
-  }else if(pathname === '/author/delete_process'){
-    author.deleteProcess(request, response);
   }else{
     response.writeHead(404);
     response.end('Not Found');

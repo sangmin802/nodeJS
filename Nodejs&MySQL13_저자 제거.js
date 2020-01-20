@@ -1,5 +1,8 @@
 var http = require('http');
 var url = require('url');
+var qs = require('querystring');
+var template = require('./lib/template.js');
+var db = require('./lib/db.js');
 var topic = require('./lib/topic.js');
 var author = require('./lib/author.js');
 
@@ -8,6 +11,7 @@ var app = http.createServer((request,response) => {
   var queryData = url.parse(_url, true).query;
   var pathname = url.parse(_url, true).pathname;
 
+  // 1. 수정이든, 삭제든 해당 페이지로 이동하는것은, a 링크를 사용해도 되지만, 해당 기능이 실행되는 과정에서는 form의 post방식을 사용해야한다 꼭!
   if(pathname === '/'){
     if(queryData.id === undefined){
       topic.home(request, response);
