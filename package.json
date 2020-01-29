@@ -18,7 +18,7 @@
   "bugs": {
     "url": "https://github.com/sangmin802/nodeJS/issues"
   },
-  "homepage": "https://github.com/sangmin802/nodeJS#readme",
+  "homepage": "https://github.com/sangmin802/nodeJS",
   "dependencies": {
     "mysql": "^2.17.1",
     "sanitize-html": "^1.20.1"
