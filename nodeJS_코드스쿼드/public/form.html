@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign up</title>
+  <title>Create New</title>
 </head>
 <body>
-  <h1>Sign Up</h1>
-  <form action="/sign_up_process" method="post">
+  <h1>Create New</h1>
+  <form action="/new_progress" method="post">
     <div>
-      id : <input type="text" name="id">
+      name : <input type="text" name="name">
     </div>
-    <div>
-      pw : <input type="password" name="pw">
-    </div>
-    <input type="submit" value="Sign Up">
+    <!-- <input type="submit" value="Sign Up"> -->
   </form>
+  <button class="ajaxSend">ajaxSend</button>
+  <div class="result">HI!</div>
+  <script src="./js/form.js" type="module"></script>
 </body>
 </html>

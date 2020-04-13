@@ -2,6 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser'); // Post data받기
 const app = express();
 const port = 3000;
+const db = require('./db.js');
+db.connect();
 
 // app method 내 느낌대로
 // 1. use : 기본값으로 설정할 내용
@@ -18,14 +20,25 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname+'/public/main.html');
 })
 
-app.get('/sign_up', (req, res) => {
+app.get('/new', (req, res) => {
   res.sendFile(__dirname+'/public/form.html');
 })
 
-app.post('/sign_up_process', (req, res) => {
-  id = req.body.id;
-  // const pw = req.body.pw;
-  res.render('welcome.ejs', {id : id});
+// app.post('/new_progress', (req, res) => {
+//   name = req.body.name;
+//   res.render('welcome.ejs', {name : name});
+// })
+
+app.post('/new_info', (req, res) => {
+  const name = req.body.name;
+  db.query('SELECT characters.id, name, age, grade, kind, description, kindDescription FROM characters LEFT JOIN age ON characters.age_id = age.id LEFT JOIN kind on characters.kind_id = kind.id Where characters.name = ?', [name], (err, data) => {
+    if(err) throw err;
+    if(data[0]){
+      res.json({result : 'Ok', data : data[0]});
+    }else{
+      res.json({result : 'No'});
+    }
+  })
 })
 
 app.listen(port, () => {
