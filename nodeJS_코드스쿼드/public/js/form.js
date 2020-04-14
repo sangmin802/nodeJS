@@ -1,13 +1,19 @@
 class Form {
   constructor(){
-    const ajaxBtn = document.querySelector('.ajaxSend');
-    ajaxBtn.addEventListener('click', () => {
+    const ajaxBtn = document.querySelector('button');
+    ajaxBtn.addEventListener('click', (e) => {
       const name = document.forms[0].elements[0].value;
-      this.sendAjax('/new_info', name);
-    })
-  }
+      const target = e.target.className;
+      if(target.includes('signIn')){
+        this.signIn('/signIn/check_name', name);
+      }else if(target.includes('signUp')){
+        const desc = document.forms[0].elements[1].value;
+        this.signUp('/signUp/new_info', name, desc)
+      };
+    });
+  };
 
-  sendAjax(url, _name){ // 서버(db)와 통신
+  signIn(url, _name){ // 서버(db)와 통신
     // flyers할때, DB받아오는거 이런방법이였나봄.
     // url이 getId같은 메소드이름
     // 1. fetch post로 url(메소드이름)에 필요한 값(data)를 보냄.
@@ -21,12 +27,12 @@ class Form {
     _name = first+_name.slice(1);
     const data = {name : _name};
     fetch(url, {
-      method: 'POST',
-      mode: 'cors', // cors여야만 header가 정상작동함. 기본값 cors이니 안건드려도 될듯
-      headers: {
+      method : 'POST',
+      mode : 'cors', // cors여야만 header가 정상작동함. 기본값 cors이니 안건드려도 될듯
+      headers : {
         'Content-Type': 'application/json', // 받을때, json형식으로 받는다.
       },
-      body: JSON.stringify(data),
+      body : JSON.stringify(data),
     })
     .then(res => {
       console.log(res);
@@ -34,12 +40,36 @@ class Form {
     })
     .then(data => {
       console.log(JSON.stringify(data)) // node server.js에서 해당 url을 통해 받아온 정보
-      if(data.result === 'Ok'){
-        document.querySelector('.result').innerHTML = `Hello! ${data.data.name}`;
-      }else{
+      if(data.result === 'No'){
         document.querySelector('.result').innerHTML = `..? Who are you..?`;
+      }else{
+        location.pathname = '/'
       }
     });
+  }
+
+  signUp(_url, _name, _desc){
+    const first = _name.charAt(0).toUpperCase();
+    _name = first+_name.slice(1);
+    const data = {name : _name, desc : _desc};
+    fetch(_url, {
+      method : 'POST',
+      mode : 'cors',
+      headers : {
+        'Content-Type' : 'application/json',
+      },
+      body : JSON.stringify(data),
+    }).then(res => {
+      console.log(res);
+      return res.json();
+    })
+    .then(data => {
+      console.log(JSON.stringify(data))
+      if(data.result === 'Ok'){
+        alert(`Welcome!!`);
+        location.pathname = '/';
+      }
+    })
   }
 }
 
