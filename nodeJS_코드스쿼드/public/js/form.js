@@ -41,7 +41,7 @@ class Form {
     .then(data => {
       console.log(JSON.stringify(data)) // node server.js에서 해당 url을 통해 받아온 정보
       if(data.result === 'No'){
-        document.querySelector('.result').innerHTML = `..? Who are you..?`;
+        document.querySelector('.result').innerHTML=data.reason;
       }else{
         location.pathname = '/'
       }
@@ -68,6 +68,8 @@ class Form {
       if(data.result === 'Ok'){
         alert(`Welcome!!`);
         location.pathname = '/';
+      }else{
+        document.querySelector('.result').innerHTML=data.reason;
       }
     })
   }

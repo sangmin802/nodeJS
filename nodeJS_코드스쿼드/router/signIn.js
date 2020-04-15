@@ -4,21 +4,37 @@ const router = express.Router();
 const path = require('path');
 const db = require('../db.js');
 const url = require('url');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 
 router.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/signIn.html'));
 });
-router.post('/check_name', (req, res) => {
-  const name = req.body.name;
-  db.query('SELECT characters.id, name, age, grade, kind, description, kindDescription FROM characters LEFT JOIN age ON characters.age_id = age.id LEFT JOIN kind on characters.kind_id = kind.id Where characters.name = ?', [name], (err, data) => {
+
+passport.use('signIn', new LocalStrategy({
+  usernameField : 'name',
+  passwordField : 'name',
+}, (name, pw, done) => {
+  db.query('SELECT * FROM characters WHERE name = ?', [name], (err, data) => {
     if(err) throw err;
-    if(data[0]){
-      req.session.data = data[0];
-      res.json({result : 'Ok', data : data[0]});
+    if(data.length !== 0){
+      return done(null, data[0]);
     }else{
-      res.json({result : 'No'});
+      return done(null, false, {reason : 'Uncertified Name!'})
     }
   })
+}))
+
+router.post('/check_name', (req, res) => {
+  passport.authenticate('signIn', (err, user, info) => {
+    if(err) throw err;
+    if(user === false){
+      res.json({result : 'No', reason : info.reason});
+    }else{
+      req.session.data = user;
+      res.json({result : 'Ok', data : user});
+    }
+  })(req, res)
 })
 
 module.exports = router;
