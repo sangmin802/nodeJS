@@ -18,8 +18,8 @@ app.use(bodyParser.urlencoded({extended : true})); // Json외로 오거나
 // app.use(flash());
 app.use(session({
   secret : 'userName',
-  resava : false,
-  saveUninitialized : true
+  resava : true,
+  saveUninitialized : false
 }));
 app.use(passport.initialize());
 app.use(passport.session());

@@ -24,11 +24,26 @@ passport.use('signUp', new LocalStrategy({
   });
 }));
 
+passport.serializeUser((user, done) => {
+  return done(null, user.id);
+})
+
+passport.deserializeUser((id, done) => {
+  db.query('SELECT * FROM characters WHERE id = ?', [id], (err, result) => {
+    if(err) throw err;
+    if(result[0]){
+      return done(null, result[0]);
+    }else{
+      return;
+    }
+  })
+})
+
 router.post('/new_info', (req, res) => {
   passport.authenticate('signUp', (err, user, info) => {
     if(err) throw err;
     if(user === false){
-      res.json({result : 'No', reason : info.reason});
+      return res.json({result : 'No', reason : info.reason});
     }else{
       const name = req.body.name;
       const desc = req.body.desc;
@@ -36,8 +51,13 @@ router.post('/new_info', (req, res) => {
         if(err2) throw err2;
         db.query('SELECT characters.id, name, age, grade, kind, description, kindDescription FROM characters LEFT JOIN age ON characters.age_id = age.id LEFT JOIN kind on characters.kind_id = kind.id Where characters.id = ?', [added.insertId], (err3, data) => {
           if(err3) throw err3;
-          req.session.data = data[0];
-          res.json({result : 'Ok', data : data[0]});
+          return req.login(data[0], (loginErr) => {
+            if(loginErr) throw err;    
+            const filteredUser = {...data[0]};
+            delete filteredUser.name;
+            console.log(filteredUser)
+            return res.json({result : 'Ok', data : filteredUser});
+          })
         })
       })
     }

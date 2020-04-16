@@ -14,6 +14,7 @@ router.get('/', (req, res) => {
 passport.use('signIn', new LocalStrategy({
   usernameField : 'name',
   passwordField : 'name',
+  session : true,
 }, (name, pw, done) => {
   db.query('SELECT * FROM characters WHERE name = ?', [name], (err, data) => {
     if(err) throw err;
@@ -25,15 +26,33 @@ passport.use('signIn', new LocalStrategy({
   })
 }))
 
+passport.serializeUser((user, done) => {
+  return done(null, user.id)
+})
+
+passport.deserializeUser((id, done) => {
+  db.query('SELECT * FROM characters WHERE id = ?', [id], (err, result) => {
+    if(err) throw err;
+    if(result[0]){
+      return done(null, result[0]);
+    }else{
+      return;
+    }
+  })
+});
+
 router.post('/check_name', (req, res) => {
   passport.authenticate('signIn', (err, user, info) => {
     if(err) throw err;
     if(user === false){
-      res.json({result : 'No', reason : info.reason});
-    }else{
-      req.session.data = user;
-      res.json({result : 'Ok', data : user});
+      return res.json({result : 'No', reason : info.reason});
     }
+    return req.login(user, (loginErr) => {
+      if(loginErr) throw loginErr;
+      const filteredUser = {...user};
+      delete filteredUser.name;
+      return res.json({result : 'Ok', data : filteredUser});
+    })
   })(req, res)
 })
 
