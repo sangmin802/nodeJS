@@ -9,7 +9,9 @@ router.get('/', (req, res) => {
   if(req.user){
     console.log(`요청된 회원정보 id : ${req.user.id}, 이름 : ${req.user.name}`)
     name = req.user.name
-  };
+  }else{
+    console.log('처음접속')
+  }
   res.render('main', {name : name})
 });
 

@@ -14,8 +14,10 @@
 
 // 1. Session기반.
 //    npm install express-session --save -dev
-//    express-session 모듈을 통해 node.js에서 session storage랑 비슷한 기능을 사용할 수 있다. req.session을 통해 정보입력, 출력 가능
-//    입력된 정보가 localstorage처럼 상시남아있어서, req.session.destroy();를 꼭 선언해줘야한다.
+//    passport & session 
+//    로그인 이후, 서버에서 특정 값을 기억하고있어서 재요청시 그 값을 토대로 진행을 한다.
+//    다른 주소의 서버를 사용하게 될 경우, 의미가 없어지고, 서버에 과부화가 심하다.
+
 // 2. JWT(Json Web Token) 토큰기반.
 
 // 본래 강의에서는 flash기능을 사용해 로그인 실패 성공등을 알렸지만, 나는 res.json으로 값을 다시 보내주고싶어서, 커스텀방식으로 함.
