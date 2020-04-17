@@ -19,5 +19,8 @@
 //    다른 주소의 서버를 사용하게 될 경우, 의미가 없어지고, 서버에 과부화가 심하다.
 
 // 2. JWT(Json Web Token) 토큰기반.
+// https://medium.com/front-end-weekly/learn-using-jwt-with-passport-authentication-9761539c4314
+
+// session과 jwt의 차이 : https://velopert.com/2350
 
 // 본래 강의에서는 flash기능을 사용해 로그인 실패 성공등을 알렸지만, 나는 res.json으로 값을 다시 보내주고싶어서, 커스텀방식으로 함.

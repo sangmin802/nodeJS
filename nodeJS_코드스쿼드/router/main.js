@@ -6,6 +6,7 @@ const db = require('../db.js');
 
 router.get('/', (req, res) => {
   let name = null;
+  console.log(req.session)
   if(req.user){
     console.log(`요청된 회원정보 id : ${req.user.id}, 이름 : ${req.user.name}`)
     name = req.user.name

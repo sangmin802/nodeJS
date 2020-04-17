@@ -3,8 +3,6 @@ const bodyParser = require('body-parser'); // Post data받기
 const router = require('./router/routes.js');
 const session = require('express-session');
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const flash = require('connect-flash');
 const app = express();
 const port = 3000;
 const db = require('./db.js');
@@ -15,11 +13,10 @@ app.set('view engine', 'ejs');
 app.use(express.static(__dirname+'/public'));
 app.use(bodyParser.json()); // Json으로 오거나
 app.use(bodyParser.urlencoded({extended : true})); // Json외로 오거나
-// app.use(flash());
 app.use(session({
   secret : 'userName',
-  resava : true,
-  saveUninitialized : false
+  resava : false,
+  saveUninitialized : true
 }));
 app.use(passport.initialize());
 app.use(passport.session());
