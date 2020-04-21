@@ -39,10 +39,11 @@ class Form {
       return res.json();
     })
     .then(data => {
-      console.log(JSON.stringify(data)) // node server.js에서 해당 url을 통해 받아온 정보
+      console.log(data) // node server.js에서 해당 url을 통해 받아온 정보
       if(data.result === 'No'){
         document.querySelector('.result').innerHTML=data.reason;
       }else{
+        localStorage.setItem('token', data.token);
         location.pathname = '/'
       }
     });

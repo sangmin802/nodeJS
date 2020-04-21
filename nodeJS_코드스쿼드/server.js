@@ -25,3 +25,6 @@ app.use(router);
 app.listen(port, () => {
   console.log(`Server connected on port ${port}!`);
 });
+
+// jwt로 인증하는것도 하긴했는데, jwt하면 ejs에 값을 옯겨줄수가 없음.
+// 존나찾아봤는데 안보임. 그냥 ejs안쓰는게 제일 현명한것같음

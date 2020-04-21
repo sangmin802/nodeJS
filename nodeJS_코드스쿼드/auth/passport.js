@@ -1,5 +1,9 @@
 const db = require('../db.js');
 const passport = require('passport');
+const jwt = require('jsonwebtoken');
+const passportJWT = require('passport-jwt');
+const JWTStrategy = passportJWT.Strategy;
+const ExtractJWT = passportJWT.ExtractJwt;
 const LocalStrategy = require('passport-local').Strategy;
 
 module.exports = (router) => {
@@ -58,6 +62,22 @@ module.exports = (router) => {
     })
   }))
 
+  // router.post('/check_name', (req, res) => {
+  //   passport.authenticate('signIn', {session : false}, (err, user, info) => {
+  //     if(err) throw err;
+  //     if(user === false){
+  //       return res.json({result : 'No', reason : info.reason});
+  //     }
+  //     return req.login(user, {session : false}, (loginErr) => {
+  //       if(loginErr) throw loginErr;
+  //       const filteredUser = {...user};
+  //       delete filteredUser.name;
+  //       const token = jwt.sign({...user}, 'SangminToken');
+  //       return res.json({result : 'Ok', data : filteredUser, token});
+  //     })
+  //   })(req, res)
+  // })
+
   router.post('/check_name', (req, res) => {
     passport.authenticate('signIn', (err, user, info) => {
       if(err) throw err;
@@ -67,7 +87,7 @@ module.exports = (router) => {
       // 1. id를 맞게 입력했다면, req.login의 첫번째 함수로 회원정보가담긴 객체user를 인자로 받는 serializeUser메소드가 실행되며, done을 통해 두번째 인자의 값을 서버에 저장한다.
       //    -> 본래, authenticate를 사용하면 req.login을 정의해주지 않아도 serializeUser가 자동실행되지만, 커스텀방식으로 하였기 때문에, 따로 입력해주어야한다.
   
-      // 2. 콜백함수인 loginErr => {...}가 실행되며, 이 때 프론트단에서 필요한 정보를 넘겨준다. (혹시 닉네임같은게 필요할 수 있으니, 건내주고 localhost에 저장하든 뭘하든 알아서..)
+      // 3. 콜백함수인 loginErr => {...}가 실행되며, 이 때 프론트단에서 필요한 정보를 넘겨준다. (혹시 닉네임같은게 필요할 수 있으니, 건내주고 localhost에 저장하든 뭘하든 알아서..)
       return req.login(user, (loginErr) => {
         if(loginErr) throw loginErr;
         const filteredUser = {...user};
@@ -79,7 +99,7 @@ module.exports = (router) => {
 
   // 재요청시 세션비교
   passport.serializeUser((user, done) => {
-    // session dir와 브라우저의 쿠키에 키워드가 저장되고, 그 키워드를 통해 상태를 유지시킴
+    // 2. session dir와 브라우저의 쿠키에 키워드가 저장되고, 그 키워드를 통해 상태를 유지시킴
     return done(null, user.id)
   })
   
