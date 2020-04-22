@@ -43,7 +43,7 @@ class Form {
       if(data.result === 'No'){
         document.querySelector('.result').innerHTML=data.reason;
       }else{
-        localStorage.setItem('token', data.token);
+        // localStorage.setItem('token', data.token);
         location.pathname = '/'
       }
     });

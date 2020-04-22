@@ -3,19 +3,17 @@ import Location from './location.js';
 class Main {
   constructor(){
     console.log('Main script started!');
-    const token = localStorage.getItem('token');
+    // const token = localStorage.getItem('token');
     // if(token){
-    //   fetch('/authCheck', {
-    //     method : 'POST',
+    //   fetch('/', {
+    //     method : 'GET',
     //     mode : 'cors',
     //     headers : {
     //       'Content-Type' : 'application/json',
     //       'Authorization' : token
     //     },
     //   })
-    //   .then(res => res.json())
-    //   .then(data => {
-    //     console.log(data)
+    //   .then(res => {
     //     const logOut = document.querySelector('.logOut');
     //     logOut.addEventListener('click', () => {
     //       Location.locationPathname('/logOut')
