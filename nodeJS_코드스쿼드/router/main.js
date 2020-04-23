@@ -7,9 +7,18 @@ const jwt = require('jsonwebtoken');
 
 router.get('/', (req, res) => {
   let name = null;
-  if(req.user){
-    console.log(`요청된 회원정보 id : ${req.user.id}, 이름 : ${req.user.name}`)
-    name = req.user.name
+  // if(req.user){
+  //   console.log(`요청된 회원정보 id : ${req.user.id}, 이름 : ${req.user.name}`)
+  //   name = req.user.name
+  // }else{
+  //   console.log('처음접속')
+  // }
+  const token = req.cookies.user;
+  if(token){
+    jwt.verify(token, 'SangminToken', (err, decoded) => {
+      console.log(`요청된 회원정보 id : ${decoded.id}, 이름 : ${decoded.name}`)
+      name = decoded.name;
+    })
   }else{
     console.log('처음접속')
   }
